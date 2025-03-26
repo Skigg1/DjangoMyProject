@@ -1,0 +1,46 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <h1>Последние статьи</h1>
+    {% if user.is_authenticated %}
+        
+    {% endif %}
+
+    {% for article in articles %}
+        <div class="article-card">
+            {% if article.image %}
+                <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-image">
+            {% endif %}
+            <div class="article-content">
+                <h2 class="article-title">
+                    <a class="article-title-text" href="{% url 'article_detail' article.pk %}">{{ article.title }}</a>
+                </h2>
+                <div class="article-meta">
+                    Автор: {{ article.author }} | {{ article.created_at|date:"d.m.Y H:i" }}
+                </div>
+                {% if user == article.author or user.is_superuser %}
+                    <div class="article-actions">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+            {% endif %}
+
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
